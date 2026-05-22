@@ -26,7 +26,7 @@ function highlight(code) {
 
 // ── Setup Screen ──────────────────────────────────────────────────────────────
 function SetupScreen({ onConnect }) {
-  const [cfg, setCfg] = useState({ apiKey:"", authDomain:"", projectId:"", storageBucket:"", messagingSenderId:"", appId:"" });
+  const [cfg, setCfg] = useState({ apiKey:"", authDomain:"", projectId:"project-1011527462549", storageBucket:"", messagingSenderId:"", appId:"" });
   const [err, setErr] = useState("");
   const fields = [
     {k:"apiKey",l:"API Key",p:"AIzaSy..."},
