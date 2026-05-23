@@ -2,12 +2,12 @@
 // Firebase Console → Project settings → General → Your apps → SDK setup and configuration.
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyBR5DVdPrL_-yEoDivvXjaS_k7TqptEPCE",
-  authDomain: "devvault-phevenam.firebaseapp.com",
-  projectId: "devvault-phevenam",
-  storageBucket: "devvault-phevenam.firebasestorage.app",
-  messagingSenderId: "1011527462549",
-  appId: "1:1011527462549:web:4e78489f43d0c744eb759c",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 export const hasBundledFirebaseConfig =
