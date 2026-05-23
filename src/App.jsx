@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { firebaseConfig, hasBundledFirebaseConfig } from "./firebaseConfig";
 
 let collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query;
 let signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged;
@@ -26,7 +27,7 @@ function highlight(code) {
 
 // ── Setup Screen ──────────────────────────────────────────────────────────────
 function SetupScreen({ onConnect }) {
-  const [cfg, setCfg] = useState({ apiKey:"", authDomain:"", projectId:"project-1011527462549", storageBucket:"", messagingSenderId:"", appId:"" });
+  const [cfg, setCfg] = useState(firebaseConfig);
   const [err, setErr] = useState("");
   const fields = [
     {k:"apiKey",l:"API Key",p:"AIzaSy..."},
@@ -72,7 +73,10 @@ service cloud.firestore {
         </div>
         {err && <p style={{color:"#ff6b6b",fontSize:13,marginTop:10}}>{err}</p>}
         <button onClick={()=>{
-          if(!cfg.apiKey||!cfg.projectId){setErr("API Key and Project ID required.");return;}
+          if(!cfg.apiKey || !cfg.authDomain || !cfg.projectId || !cfg.storageBucket || !cfg.messagingSenderId || !cfg.appId){
+            setErr("All Firebase config fields are required.");
+            return;
+          }
           localStorage.setItem(FIREBASE_CONFIG_KEY,JSON.stringify(cfg));
           onConnect(cfg);
         }} style={{marginTop:16,width:"100%",padding:"12px",background:"#00d4aa",border:"none",borderRadius:8,color:"#0a0f0e",fontFamily:"'DM Mono',monospace",fontSize:14,fontWeight:700,cursor:"pointer"}}>
@@ -267,11 +271,6 @@ export default function DevVault() {
     ? {"--bg":"#0d1117","--surface":"#161b22","--border":"#21262d","--text":"#e6edf3","--muted":"#7d8590"}
     : {"--bg":"#f6f8fa","--surface":"#ffffff","--border":"#d0d7de","--text":"#1f2328","--muted":"#656d76"};
 
-  useEffect(() => {
-    const saved = localStorage.getItem(FIREBASE_CONFIG_KEY);
-    if (saved) { try { initFirebase(JSON.parse(saved)); } catch { setPhase("setup"); } }
-    else { setPhase("setup"); }
-  }, []);
 
   const initFirebase = useCallback(async (config) => {
     try {
@@ -298,6 +297,26 @@ export default function DevVault() {
       setPhase("setup");
     }
   }, []);
+
+  useEffect(() => {
+    if (hasBundledFirebaseConfig) {
+      initFirebase(firebaseConfig);
+      return;
+    }
+
+    const saved = localStorage.getItem(FIREBASE_CONFIG_KEY);
+    if (saved) {
+      try {
+        initFirebase(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem(FIREBASE_CONFIG_KEY);
+        setPhase("setup");
+      }
+      return;
+    }
+
+    setPhase("setup");
+  }, [initFirebase]);
 
   useEffect(() => {
     if (!firestoreDb || !user) return;
